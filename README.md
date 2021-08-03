@@ -1,8 +1,7 @@
 
 # Bangla Dictionary
 
-A feature-riched dictionary for translating words from English to Bangla and vice-versa.
-
+A feature-rich dictionary for translating words from English to Bangla and vice-versa.
 
 ## Features
 
@@ -16,7 +15,6 @@ A feature-riched dictionary for translating words from English to Bangla and vic
 1. Clipboard Monitoring
 1. Stay Above Other Windows
 1. Auto Detect Language
-
 
 ## Build and Run
 
@@ -37,8 +35,16 @@ You can also create standalone executable from the source.
 
 ### Create Standalone Executable
 
+#### Linux
+
 ```sh
-pyinstaller -w -i assets/icon.ico -n "Bangla Dictionary" --add-data assets:assets -F main.py
+pyinstaller -w -i assets/icon.ico -n "Bangla Dictionary" --add-data "assets:assets" -F main.py
+```
+
+#### Windows
+
+```sh
+pyinstaller -w -i assets/icon.ico -n "Bangla Dictionary" --add-data "assets;assets" -F main.py
 ```
 
 Now look inside the `dist` directory (created automatically) for the standalone executable.
@@ -61,7 +67,7 @@ sudo cp assets/icon.png /opt/apps/bangla-dictionary/icon.png
 #### Create Desktop Entry:
 
 ```sh
-cat <<EOT > /usr/share/applications/bangla-dictionary.desktop
+cat <<EOT | sudo tee /usr/share/applications/bangla-dictionary.desktop
 [Desktop Entry]
 Version=1.0
 Type=Application
