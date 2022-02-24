@@ -15,6 +15,8 @@ A feature-rich dictionary for translating words from English to Bangla and vice-
 1. Clipboard Monitoring
 1. Stay Above Other Windows
 1. Auto Detect Language
+1. Text To Speech (TTS, Linux Only)
+1. Auto Detect Available TTS (`espeak, flite, festival`)
 
 ## Build and Run
 

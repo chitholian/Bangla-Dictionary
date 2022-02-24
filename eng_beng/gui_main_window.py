@@ -1,12 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
+from eng_beng.extra import TTSEngine
 from eng_beng.functions import resource_path
 
 
 class GuiMainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.tts = TTSEngine()
 
         self.inputLine = QLineEdit()
         self.inputLine.setPlaceholderText("Enter some text...")
@@ -23,6 +25,9 @@ class GuiMainWindow(QMainWindow):
         self.autoSpeakCheck.setText("Auto Speak")
         self.keepAboveCheck = QCheckBox()
         self.keepAboveCheck.setText("Keep Window Above")
+        self.ttsCombo = QComboBox()
+        for engine in self.tts.engines:
+            self.ttsCombo.addItem(engine)
 
         self.exitAction = QAction(
             QIcon(resource_path('assets/quit.png')), '&Exit', self)
@@ -47,8 +52,10 @@ class GuiMainWindow(QMainWindow):
         h_box = QHBoxLayout()
         layout.addLayout(h_box)
         h_box.addWidget(self.inputLine)
-        # h_box.addWidget(self.speakBtn)
         h_box.addWidget(self.clearBtn)
+        if self.tts.ok:
+            h_box.addWidget(self.ttsCombo)
+            h_box.addWidget(self.speakBtn)
 
         layout.addWidget(self.outputBox)
 
@@ -57,7 +64,8 @@ class GuiMainWindow(QMainWindow):
         h_box.addWidget(self.monitorClipCheck)
         h_box.addStretch()
         h_box.addWidget(self.keepAboveCheck)
-        # h_box.addWidget(self.autoSpeakCheck)
+        if self.tts.ok:
+            h_box.addWidget(self.autoSpeakCheck)
 
         self.setCentralWidget(body)
         self.resize(400, 640)

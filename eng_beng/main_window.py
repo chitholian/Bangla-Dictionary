@@ -27,7 +27,7 @@ class MainWindow(GuiMainWindow):
 
         # Self Configs
         self.monitorClipBoard = True
-        self.autoSpeak = True
+        self.autoSpeak = self.tts.ok
         self.keepAbove = True
         self.last_clip_changed = 0
 
@@ -56,19 +56,26 @@ class MainWindow(GuiMainWindow):
         self.inputLine.textChanged.connect(self.on_input_changed)
         self.inputLine.returnPressed.connect(self.on_input_submitted)
         self.clearBtn.clicked.connect(self.on_clear_input_clicked)
-        self.monitorClipCheck.stateChanged.connect(
-            self.on_clip_monitor_check_changed)
-        self.autoSpeakCheck.stateChanged.connect(
-            self.on_auto_speak_check_changed)
-        self.keepAboveCheck.stateChanged.connect(
-            self.on_keep_above_check_changed)
-
+        self.ttsCombo.currentTextChanged.connect(self.on_tts_changed)
+        self.speakBtn.clicked.connect(self.on_speak_btn_clicked)
+        self.monitorClipCheck.stateChanged.connect(self.on_clip_monitor_check_changed)
+        self.autoSpeakCheck.stateChanged.connect(self.on_auto_speak_check_changed)
+        self.keepAboveCheck.stateChanged.connect(self.on_keep_above_check_changed)
         self.exitAction.triggered.connect(QApplication.quit)
         self.aboutAction.triggered.connect(self.show_about)
 
     def on_clear_input_clicked(self):
         self.inputLine.clear()
         self.inputLine.setFocus()
+
+    def on_speak_btn_clicked(self):
+        text = self.inputLine.text()
+        if not text:
+            return
+        self.speak_now(text)
+
+    def on_tts_changed(self, value):
+        self.tts.engine = value
 
     def on_completer_done(self, value: str):
         self.translate_now(value)
@@ -99,8 +106,7 @@ class MainWindow(GuiMainWindow):
             QApplication.clipboard().dataChanged.disconnect(self.use_clipboard_data)
 
     def on_auto_speak_check_changed(self, value):
-        # print(self, value, 'auto speak')
-        pass
+        self.autoSpeak = value == Qt.CheckState.Checked
 
     def on_keep_above_check_changed(self, value):
         keep_above = value == Qt.CheckState.Checked
@@ -126,7 +132,8 @@ class MainWindow(GuiMainWindow):
         if not text:
             return
         self.inputLine.setText(text)
-        self.speak_now(text)
+        if self.autoSpeak:
+            self.speak_now(text)
         is_eng = len(text) == len(text.encode())
         if is_eng:
             query = QSqlQuery("SELECT serial, word, extra, phonetic, antonyms, definitions, examples FROM bangla WHERE"
@@ -202,14 +209,13 @@ class MainWindow(GuiMainWindow):
         self.outputBox.setHtml('<h4 style="color: red;text-align:center">Nothing Found!</h4>')
 
     def speak_now(self, text):
-        # TODO: Implement this
-        pass
+        self.tts.speak_text(text)
 
     def show_about(self):
         htm = f'''
         <div style="text-align: center">
             <h2>Bangla Dictionary</h2>
-            <small>v1.0.0</small><br>
+            <small>v1.1.0</small><br>
             <a href="https://github.com/chitholian/Bangla-Dictionary">
                 https://github.com/chitholian/Bangla-Dictionary
             </a>
